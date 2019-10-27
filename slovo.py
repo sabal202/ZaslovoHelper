@@ -8,14 +8,10 @@ def clock(func):
         t0 = time.perf_counter()
         result = func(*args, **kwargs)
         elapsed = time.perf_counter() - t0
-        call = ", ".join([repr(a) for a in args] + [f"{k}={v!r}" for k, v in kwargs.items()])
-        print(f'[{elapsed:0.8f}s] {func.__name__}')
+        print(f'[{elapsed:0.8f}]s {func.__name__}')
         return result
 
     return clocked
-
-
-height = 0
 
 
 class Node:
@@ -26,10 +22,10 @@ class Node:
         self.is_end = is_end
 
     def __str__(self):
-        return f'Node {self.symbol}, is_end {self.is_end}'
+        return f'Node {self.symbol}, word {self.word or None}'
 
     def __repr__(self):
-        return f'Node({self.symbol, self.is_end})'
+        return f'Node({self.symbol}, is_end={self.is_end})'
 
 
 def insert(node, word, pre=''):
@@ -54,6 +50,9 @@ class Trie:
             self.leafs[char] = Node(char)
         node = self.leafs[char]
         insert(node, word[1:], word[0])
+
+    def __str__(self):
+        return f"Trie with {self.leafs}"
 
 
 def transform_into_matrix(table):
@@ -116,8 +115,6 @@ def findall(table, dictionary):
 
 alphabet = 'абвгдежзийклмнопрстуфхцчшщъыьэюя'
 
-
-@clock
 def read_words(filename):
     with open(filename, mode='r', encoding='utf-8') as file:
         result = []
@@ -143,7 +140,4 @@ result = findall(table, dictionary)
 result = list(result)
 result.sort(key=len, reverse=False)
 print("Слов найдено:", len(result))
-import random
-
-# random.shuffle(result)
-print(*result, sep='\n')
+print(*result, sep=' ')
